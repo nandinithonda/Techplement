@@ -1,1 +1,141 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class QuizGenerator {
+    private static List<Quiz> quizzes = new ArrayList<>();
+    private static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+     
+        boolean exit = false;
+        while (!exit) {
+            
+            System.out.println("Quiz Generator");
+        System.out.println("1. Create Quiz");
+        System.out.println("2. Add Question to Quiz");
+        System.out.println("3. Partipate in Quiz");
+        System.out.println("4. Exit");
+        System.out.print("Choose an option: ");
+            int choice = sc.nextInt();
+            sc.nextLine(); 
+            switch (choice) {
+                case 1: createQuiz(); break;
+                case 2: addQuestionToQuiz(); break;
+                case 3: takeQuiz(); break;
+                case 4: exit = true; break;
+                default: System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+   
+
+    private static void createQuiz() {
+        System.out.print("Enter quiz topic: ");
+        String topic = sc.nextLine();
+        quizzes.add(new Quiz(topic));
+        System.out.println("Quiz on " + topic + " created.");
+    }
+
+    
+    private static void addQuestionToQuiz() {
+        System.out.println("Select a quiz:");
+        for (int i = 0; i < quizzes.size(); i++) {
+            System.out.println((i + 1) + ". " + quizzes.get(i).getTopic());
+        }
+        int quizIndex = sc.nextInt() - 1;
+        sc.nextLine(); 
+
+        if (quizIndex < 0 || quizIndex >= quizzes.size()) {
+            System.out.println("Invalid quiz selection.");
+            return;
+        }
+
+        Quiz selectedQuiz = quizzes.get(quizIndex);
+
+        System.out.print("Enter question: ");
+        String questionText = sc.nextLine();
+
+        List<String> options = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            System.out.print("Enter option " + (i + 1) + ": ");
+            options.add(sc.nextLine());
+        }
+
+        System.out.print("Enter correct answer (1-4): ");
+        int correctAnswer = sc.nextInt();
+        sc.nextLine(); 
+
+        Question question = new Question(questionText, options, correctAnswer - 1);
+        selectedQuiz.addQuestion(question);
+        System.out.println("Question added to quiz on " + selectedQuiz.getTopic());
+    }
+
+    
+    private static void takeQuiz() {
+        System.out.println("Select a quiz to take:");
+        for (int i = 0; i < quizzes.size(); i++) {
+            System.out.println((i + 1) + ". " + quizzes.get(i).getTopic());
+        }
+        int quizIndex = sc.nextInt() - 1;
+        sc.nextLine(); 
+
+        if (quizIndex < 0 || quizIndex >= quizzes.size()) {
+            System.out.println("Invalid quiz selection.");
+            return;
+        }
+
+        Quiz selectedQuiz = quizzes.get(quizIndex);
+        List<Question> questions = selectedQuiz.getQuestions();
+        int score = 0;
+
+        for (Question question : questions) {
+            System.out.println(question.getQuestionText());
+            List<String> options = question.getOptions();
+            for (int i = 0; i < options.size(); i++) {
+                System.out.println((i + 1) + ". " + options.get(i));
+            }
+            System.out.print("Your answer: ");
+            int userAnswer = sc.nextInt() - 1;
+            if (userAnswer == question.getCorrectAnswer()) {
+                score++;
+            }
+        }
+        System.out.println("You scored " + score + " out of " + questions.size());
+    }
+}
+
+class Question {
+    private String questionText;
+    private List<String> options;
+    private int correctAnswer;
+
+    public Question(String questionText, List<String> options, int correctAnswer) {
+        this.questionText = questionText;
+        this.options = options;
+        this.correctAnswer = correctAnswer;
+    }
+
+    public String getQuestionText() { return questionText; }
+    public List<String> getOptions() { return options; }
+    public int getCorrectAnswer() { return correctAnswer; }
+}
+
+
+class Quiz {
+    private String topic;
+    private List<Question> questions;
+
+    public Quiz(String topic) {
+        this.topic = topic;
+        this.questions = new ArrayList<>();
+    }
+
+    public String getTopic() { return topic; }
+    public void addQuestion(Question question) { questions.add(question); }
+    public List<Question> getQuestions() { return questions; }
+}
+
+
 
